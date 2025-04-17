@@ -188,7 +188,7 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
 
       {slots?.bottomArea}
 
-      <NavUpgrade />
+      {/* <NavUpgrade /> */}
     </>
   );
 }

@@ -16,7 +16,7 @@ import TablePagination from '@mui/material/TablePagination';
 
 import { useAppDispatch } from 'src/hooks';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { fetchAllEmployees } from 'src/redux/services/employeeSlice';
+import { fetchAllCorporates } from 'src/redux/services/corporateSlice';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -32,21 +32,20 @@ import type { UserProps } from '../user-table-row';
 
 // ----------------------------------------------------------------------
 
-export function UserView() {
-  const dispatch = useAppDispatch();
+export function CorporateView() {
   const table = useTable();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [filterName, setFilterName] = useState('');
   const [refetch, setRefetch] = useState(false);
-
-  const { employees, isLoading } = useSelector((state: RootState) => state?.employee);
+  const { corporates, isLoading } = useSelector((state: RootState) => state.corporates);
 
   useEffect(() => {
-    dispatch(fetchAllEmployees());
+    dispatch(fetchAllCorporates());
   }, [dispatch, refetch]);
 
   const dataFiltered: UserProps[] = applyFilter({
-    inputData: employees,
+    inputData: corporates,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
@@ -70,17 +69,15 @@ export function UserView() {
         }}
       >
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Employees
+          Corporates
         </Typography>
         <Button
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
-          onClick={() => {
-            navigate('/employees/new');
-          }}
+          onClick={() => navigate('/corporates/new')}
         >
-          New Employee
+          New Corporate
         </Button>
       </Box>
 
@@ -100,22 +97,23 @@ export function UserView() {
               <UserTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={employees?.length}
+                rowCount={corporates?.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    employees?.map((user) => user?._id)
+                    corporates?.map((user) => user?._id)
                   )
                 }
                 headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'email', label: 'Email' },
-                  { id: 'number', label: 'Phone Number' },
                   { id: 'companyName', label: 'Company Name' },
-                  { id: 'department', label: 'Department' },
-                  { id: 'hotelLimit', label: 'Hotel Limit' },
+                  { id: 'contactPerson', label: 'Contact Person' },
+                  { id: 'designation', label: 'Designation' },
+                  { id: 'contactNumber', label: 'Contact Number' },
+                  { id: 'emailId', label: 'Email Id' },
+                  { id: 'address', label: 'Address', align: 'center' },
+                  { id: 'departments', label: 'Departments' },
                   { id: '' },
                 ]}
               />
@@ -129,8 +127,8 @@ export function UserView() {
                     <UserTableRow
                       key={row?._id}
                       row={row}
-                      selected={table.selected.includes(row?._id)}
-                      onSelectRow={() => table.onSelectRow(row?._id)}
+                      selected={table.selected.includes(row._id)}
+                      onSelectRow={() => table.onSelectRow(row._id)}
                       refetch={refetch}
                       setRefetch={setRefetch}
                     />
@@ -138,7 +136,7 @@ export function UserView() {
 
                 <TableEmptyRows
                   height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, employees?.length)}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, corporates?.length)}
                 />
 
                 {notFound && <TableNoData searchQuery={filterName} />}
@@ -150,7 +148,7 @@ export function UserView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={employees?.length}
+          count={corporates?.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}

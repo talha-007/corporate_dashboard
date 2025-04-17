@@ -19,33 +19,23 @@ export const navData = [
     icon: icon('ic-analytics'),
   },
   {
-    title: 'User',
-    path: '/user',
+    title: 'Employees',
+    path: '/employees',
     icon: icon('ic-user'),
   },
   {
-    title: 'Product',
-    path: '/products',
-    icon: icon('ic-cart'),
-    info: (
-      <Label color="error" variant="inverted">
-        +3
-      </Label>
-    ),
+    title: 'Corporates',
+    path: '/Corporates',
+    icon: icon('ic-user'),
   },
-  {
-    title: 'Blog',
-    path: '/blog',
-    icon: icon('ic-blog'),
-  },
-  {
-    title: 'Sign in',
-    path: '/sign-in',
-    icon: icon('ic-lock'),
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic-disabled'),
-  },
+  // {
+  //   title: 'Product',
+  //   path: '/products',
+  //   icon: icon('ic-cart'),
+  //   info: (
+  //     <Label color="error" variant="inverted">
+  //       +3
+  //     </Label>
+  //   ),
+  // },
 ];

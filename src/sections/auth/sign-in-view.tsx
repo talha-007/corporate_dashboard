@@ -1,28 +1,62 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { useRouter } from 'src/routes/hooks';
+import { useAppDispatch } from 'src/hooks';
+import { adminLogin } from 'src/redux/services/authSlice';
 
 import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export function SignInView() {
-  const router = useRouter();
+const initialValues = {
+  email: '',
+  password: '',
+};
 
+export function SignInView() {
+  const dispatch = useAppDispatch();
+  const [values, setValues] = useState(initialValues);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignIn = useCallback(() => {
-    router.push('/');
-  }, [router]);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setValues({
+      ...values,
+      [name]: value,
+    });
+    validations({ [name]: value });
+  };
+  const validations = (fieldValue = values) => {
+    const temp = { ...errors };
+
+    if ('email' in fieldValue) temp.email = fieldValue.email ? '' : 'This Field is Required';
+    if ('password' in fieldValue)
+      temp.password = fieldValue.password ? '' : 'This Field is Required';
+    setErrors({
+      ...temp,
+    });
+    return Object.values(temp).every((x) => x === '');
+  };
+
+  const handleSubmit = async () => {
+    const datas = { ...values };
+    try {
+      const res = await dispatch(adminLogin(datas)).unwrap(); // <- unwrap gives you the actual payload or throws
+      if (res.token) {
+        toast.success(res.message);
+      }
+    } catch (error) {
+      console.error('Login failed', error);
+    }
+  };
 
   const renderForm = (
     <Box
@@ -41,17 +75,16 @@ export function SignInView() {
         slotProps={{
           inputLabel: { shrink: true },
         }}
+        onChange={handleChange}
+        value={values.email}
+        error={Boolean(errors.email)}
+        helperText={errors.email}
       />
-
-      <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
-        Forgot password?
-      </Link>
 
       <TextField
         fullWidth
         name="password"
         label="Password"
-        defaultValue="@demo1234"
         type={showPassword ? 'text' : 'password'}
         slotProps={{
           inputLabel: { shrink: true },
@@ -66,6 +99,10 @@ export function SignInView() {
           },
         }}
         sx={{ mb: 3 }}
+        onChange={handleChange}
+        value={values.password}
+        error={Boolean(errors.password)}
+        helperText={errors.password}
       />
 
       <Button
@@ -74,7 +111,7 @@ export function SignInView() {
         type="submit"
         color="inherit"
         variant="contained"
-        onClick={handleSignIn}
+        onClick={handleSubmit}
       >
         Sign in
       </Button>
@@ -93,44 +130,8 @@ export function SignInView() {
         }}
       >
         <Typography variant="h5">Sign in</Typography>
-        <Typography
-          variant="body2"
-          sx={{
-            color: 'text.secondary',
-          }}
-        >
-          Don’t have an account?
-          <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-            Get started
-          </Link>
-        </Typography>
       </Box>
       {renderForm}
-      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
-        <Typography
-          variant="overline"
-          sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
-        >
-          OR
-        </Typography>
-      </Divider>
-      <Box
-        sx={{
-          gap: 1,
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:google" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:github" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:twitter" />
-        </IconButton>
-      </Box>
     </>
   );
 }

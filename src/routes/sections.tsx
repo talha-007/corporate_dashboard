@@ -10,14 +10,20 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 
-// ----------------------------------------------------------------------
+import { PublicRoute, ProtectedRoute } from './guards'; // update the path
 
-export const DashboardPage = lazy(() => import('src/pages/dashboard'));
-export const BlogPage = lazy(() => import('src/pages/blog'));
-export const UserPage = lazy(() => import('src/pages/user'));
-export const SignInPage = lazy(() => import('src/pages/sign-in'));
-export const ProductsPage = lazy(() => import('src/pages/products'));
-export const Page404 = lazy(() => import('src/pages/page-not-found'));
+const DashboardPage = lazy(() => import('src/pages/dashboard'));
+const BlogPage = lazy(() => import('src/pages/blog'));
+const EmployeePage = lazy(() => import('src/pages/user'));
+const CorporatePage = lazy(() => import('src/pages/corporates'));
+const SignInPage = lazy(() => import('src/pages/sign-in'));
+const ProductsPage = lazy(() => import('src/pages/products'));
+const Page404 = lazy(() => import('src/pages/page-not-found'));
+
+const NewEmployee = lazy(() => import('src/sections/user/view/new-employee'));
+const EditEmployee = lazy(() => import('src/sections/user/view/edit-employee'));
+const NewCorporate = lazy(() => import('src/sections/corporate/view/new-corporate'));
+const EditCorporate = lazy(() => import('src/sections/corporate/view/edit-corporate'));
 
 const renderFallback = () => (
   <Box
@@ -42,15 +48,22 @@ const renderFallback = () => (
 export const routesSection: RouteObject[] = [
   {
     element: (
-      <DashboardLayout>
-        <Suspense fallback={renderFallback()}>
-          <Outlet />
-        </Suspense>
-      </DashboardLayout>
+      <ProtectedRoute>
+        <DashboardLayout>
+          <Suspense fallback={renderFallback()}>
+            <Outlet />
+          </Suspense>
+        </DashboardLayout>
+      </ProtectedRoute>
     ),
     children: [
       { index: true, element: <DashboardPage /> },
-      { path: 'user', element: <UserPage /> },
+      { path: 'employees', element: <EmployeePage /> },
+      { path: '/employees/new', element: <NewEmployee /> },
+      { path: '/employees/edit/:id', element: <EditEmployee /> },
+      { path: 'Corporates', element: <CorporatePage /> },
+      { path: '/Corporates/new', element: <NewCorporate /> },
+      { path: '/Corporates/edit/:id', element: <EditCorporate /> },
       { path: 'products', element: <ProductsPage /> },
       { path: 'blog', element: <BlogPage /> },
     ],
@@ -58,9 +71,11 @@ export const routesSection: RouteObject[] = [
   {
     path: 'sign-in',
     element: (
-      <AuthLayout>
-        <SignInPage />
-      </AuthLayout>
+      <PublicRoute>
+        <AuthLayout>
+          <SignInPage />
+        </AuthLayout>
+      </PublicRoute>
     ),
   },
   {

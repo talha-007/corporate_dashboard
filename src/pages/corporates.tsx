@@ -1,15 +1,15 @@
 import { CONFIG } from 'src/config-global';
 
-import { UserView } from 'src/sections/user/view';
+import { CorporateView } from 'src/sections/corporate/view';
 
 // ----------------------------------------------------------------------
 
 export default function Page() {
   return (
     <>
-      <title>{`Employees - ${CONFIG.appName}`}</title>
+      <title>{`Corporates - ${CONFIG.appName}`}</title>
 
-      <UserView />
+      <CorporateView />
     </>
   );
 }

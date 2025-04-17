@@ -10,25 +10,22 @@ import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
-import employeeServices from 'src/redux/api/employeeServices';
+import corporateServices from 'src/redux/api/corporateServices';
 
 import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-interface Corporate {
+interface UserProps {
+  _id: string;
   companyName: string;
+  contactPerson: string;
+  designation: string;
+  contactNumber: string;
+  emailId: string;
+  address: string; // Add the 'address' property
+  departments: string[]; // Assuming 'departments' is an array of strings
 }
-
-export type UserProps = {
-  _id: Key | null | undefined;
-  employeeName: string;
-  email: string;
-  mobile: string;
-  corporateId?: Corporate; // Optional if it can be null or undefined
-  department: string;
-  hotelLimit: string;
-};
 
 type UserTableRowProps = {
   row: UserProps;
@@ -55,10 +52,9 @@ export function UserTableRow({
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
-
   const handleDelete = async () => {
     try {
-      const res = await employeeServices.deleteEmployee(row._id);
+      const res = await corporateServices.deleteCorporate(row._id);
       if (res.status === 200) {
         toast.success(res.data.message);
         handleClosePopover();
@@ -68,7 +64,6 @@ export function UserTableRow({
       console.log(error);
     }
   };
-
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -76,12 +71,20 @@ export function UserTableRow({
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
 
-        <TableCell>{row.employeeName}</TableCell>
-        <TableCell>{row.email}</TableCell>
-        <TableCell>{row.mobile}</TableCell>
-        <TableCell>{row?.corporateId?.companyName}</TableCell>
-        <TableCell>{row?.department}</TableCell>
-        <TableCell>{row?.hotelLimit}</TableCell>
+        <TableCell>{row.companyName}</TableCell>
+
+        <TableCell>{row.contactPerson}</TableCell>
+        <TableCell>{row.designation}</TableCell>
+        <TableCell>{row.contactNumber}</TableCell>
+        <TableCell>{row.emailId}</TableCell>
+        <TableCell>{row.address}</TableCell>
+        <TableCell>
+          {row.departments.map((dept, index) => (
+            <p key={index} style={{ margin: 0 }}>
+              {dept}
+            </p>
+          ))}
+        </TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>
@@ -115,7 +118,7 @@ export function UserTableRow({
         >
           <MenuItem
             onClick={() => {
-              navigate(`/employees/edit/${row._id}`);
+              navigate(`/corporates/edit/${row._id}`);
               handleClosePopover();
             }}
           >
